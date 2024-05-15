@@ -1,0 +1,5 @@
+__pycache__
+shape_predictor_68_face_landmarks.dat
+Service.json
+yolov5
+yolov5s.pt

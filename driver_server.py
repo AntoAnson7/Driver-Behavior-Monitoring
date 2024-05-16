@@ -1,6 +1,5 @@
 from flask import Flask, jsonify,request
 import detection_vars as dv
-import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 app = Flask(__name__)
@@ -29,29 +28,18 @@ def get_all():
                 rides_ref = user_ref.collection('rides')
                 rides_count = len(list(rides_ref.list_documents()))
 
-                new_ride_id = f'ride{rides_count + 1}'
+                if (rides_count+1)<10:
+                    rides_no=f"00{rides_count+1}"
+                elif (rides_count+1)>=10 and (rides_count+1)<100:
+                    rides_no=f"0{rides_count+1}"
+                else:
+                    rides_no=rides_count+1
+
+                new_ride_id = f'ride{rides_no}'
                 new_ride_data = dv.get_all({"userid":userid,"time":time})
 
                 rides_ref.document(new_ride_id).set(new_ride_data)
                 
-                # Calculate total distance and duration
-                # rides_docs = rides_ref.stream()
-                # total_distance = 0
-                # total_duration = 0
-                # average_speed=0
-                # for ride_doc in rides_docs:
-                #     ride_data = ride_doc.to_dict()
-                #     total_distance += ride_data.get('distance', 0)
-                #     # total_duration += ride_data.get('ride_duration', 0)
-                #     average_speed += ride_data.get('avg_speed', 0)
-                
-                # # Calculate average speed
-                # average_speed = total_distance / len(rides_docs) if len(rides_docs) > 0 else 0
-
-                # # Update the userinfo document with the calculated values
-                # userinfo_ref.update({'distance': total_distance, 'average_speed': average_speed})
-
-                # _id = userinfo_data["id"]
                 return jsonify({"status": f"db updated with ride {rides_count + 1} for user: ",
                                 "data": new_ride_data})
             else:
@@ -67,3 +55,20 @@ if __name__ == '__main__':
 
 
 #  python -m flask --app .\driver_server.py run
+
+#!Received data
+# formatted_output={
+#         "date":datetime.datetime.now().strftime('%d/%m/%Y'),
+#         "ride_duration":f"{(e_time-s_time)/60} minutes",
+#         "start_time":start,
+#         "end_time":end,
+#         "drowsiness_status":drowsy_data[0],
+#         "score":score,
+#         "inattention":info["inattention"],
+#         "cellphone_det":info["cell_det"],
+#         "cell_time":info["cell_time"],
+#         "links":access_link if access_link!=0 else "no images",
+#         "avg_speed":avg_speed,
+#         "distance":float(f"{avg_speed*((e_time-s_time)/3600)}"),
+#         "pose_unsafe_perc":info["pose_unsafe_perc"]
+#     }

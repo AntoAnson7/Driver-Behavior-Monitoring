@@ -570,7 +570,7 @@ def get_all(user_data):
 
     formatted_output={
         "date":datetime.datetime.now().strftime('%d/%m/%Y'),
-        "ride_duration":f"{(e_time-s_time)/60} minutes",
+        "ride_duration":f"{(e_time-s_time)/60}",
         "start_time":start,
         "end_time":end,
         "drowsiness_status":drowsy_data[0],
